@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -21,21 +22,51 @@ export default function WorkOrders() {
   const [search, setSearch] = useState('');
   const { toast } = useToast();
 
-  const { data: orders } = useSWR<WorkOrder[]>(`/api/work-orders${search ? `?search=${search}` : ''}`);
+  const { data: orders, error: fetchError, mutate: mutateOrders } = 
+    useSWR<WorkOrder[]>(`/api/work-orders${search ? `?search=${search}` : ''}`);
+
+  // Handle any fetch errors
+  if (fetchError) {
+    console.error('Error fetching work orders:', fetchError);
+    toast({
+      title: "Error",
+      description: "Failed to load quests. Please refresh the page.",
+      variant: "destructive"
+    });
+  }
 
   const handleCreate = async (data: Partial<WorkOrder>) => {
     try {
-      await fetch('/api/work-orders', {
+      const response = await fetch('/api/work-orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      mutate('/api/work-orders');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create quest');
+      }
+
+      const newQuest = await response.json();
+      console.log('Created new quest:', newQuest);
+
+      // Mutate both the work orders list and stats
+      await Promise.all([
+        mutateOrders(),
+        mutate('/api/stats')
+      ]);
+
       setIsCreateOpen(false);
+      toast({
+        title: "Success",
+        description: "New quest has been posted successfully!"
+      });
     } catch (error) {
+      console.error('Error creating quest:', error);
       toast({
         title: "Error",
-        description: "Failed to create work order",
+        description: error instanceof Error ? error.message : "Failed to create quest",
         variant: "destructive"
       });
     }
@@ -44,20 +75,32 @@ export default function WorkOrders() {
   const handleStatusUpdate = async (status: 'in_progress' | 'completed') => {
     if (!selectedQuest) return;
     try {
-      await fetch(`/api/work-orders/${selectedQuest.id}`, {
+      const response = await fetch(`/api/work-orders/${selectedQuest.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...selectedQuest, status }),
       });
-      mutate('/api/work-orders');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update quest status');
+      }
+
+      // Mutate both the work orders list and stats
+      await Promise.all([
+        mutateOrders(),
+        mutate('/api/stats')
+      ]);
+
       toast({
         title: "Success",
         description: `Quest ${status === 'in_progress' ? 'accepted' : 'completed'} successfully`
       });
     } catch (error) {
+      console.error('Error updating quest status:', error);
       toast({
         title: "Error",
-        description: "Failed to update quest status",
+        description: error instanceof Error ? error.message : "Failed to update quest status",
         variant: "destructive"
       });
     }
@@ -120,6 +163,9 @@ export default function WorkOrders() {
         <DialogContent className="bg-gray-900 border-gray-800">
           <DialogHeader>
             <DialogTitle className="font-game">Post New Quest</DialogTitle>
+            <DialogDescription>
+              Fill out the details below to post a new quest on the board.
+            </DialogDescription>
           </DialogHeader>
           <WorkOrderForm onSubmit={handleCreate} />
         </DialogContent>
