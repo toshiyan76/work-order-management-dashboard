@@ -1,36 +1,55 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallback from "./ErrorBoundary";
 
-export default function Navigation() {
+function NavigationContent() {
   const [location] = useLocation();
 
   return (
-    <nav className="border-b border-gray-800 bg-gray-900/50">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <h1 className="text-xl font-bold font-game bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">QuestFlow</h1>
-            <div className="flex space-x-4">
-              <Link href="/">
-                <span className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium cursor-pointer",
-                  location === "/" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-800"
-                )}>
-                  Dashboard
-                </span>
-              </Link>
-              <Link href="/work-orders">
-                <span className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium cursor-pointer",
-                  location === "/work-orders" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-800"
-                )}>
-                  Quest Board
-                </span>
-              </Link>
-            </div>
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-2xl items-center">
+        <div className="flex items-center space-x-8">
+          <Link 
+            href="/" 
+            className="text-xl font-bold font-game bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent hover:opacity-90 transition-all"
+          >
+            Quest Board
+          </Link>
+          <div className="flex space-x-4">
+            <Link 
+              href="/" 
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                location === "/" 
+                  ? "bg-primary/20 text-primary hover:bg-primary/30" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
+            >
+              Dashboard
+            </Link>
+            <Link 
+              href="/work-orders" 
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                location === "/work-orders" 
+                  ? "bg-primary/20 text-primary hover:bg-primary/30" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
+            >
+              Work Orders
+            </Link>
           </div>
         </div>
       </div>
     </nav>
+  );
+}
+
+export default function Navigation() {
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <NavigationContent />
+    </ErrorBoundary>
   );
 }

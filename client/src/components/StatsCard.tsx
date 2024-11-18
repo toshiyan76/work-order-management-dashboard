@@ -10,7 +10,7 @@ export default function StatsCard({ stats }: StatsCardProps) {
     <div className="grid gap-4 md:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Pending</CardTitle>
+          <CardTitle className="text-sm font-medium">受付中</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.pending}</div>
@@ -19,7 +19,7 @@ export default function StatsCard({ stats }: StatsCardProps) {
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+          <CardTitle className="text-sm font-medium">進行中</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.inProgress}</div>
@@ -28,7 +28,7 @@ export default function StatsCard({ stats }: StatsCardProps) {
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Completed</CardTitle>
+          <CardTitle className="text-sm font-medium">完了</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.completed}</div>

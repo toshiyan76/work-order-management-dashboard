@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -34,34 +34,57 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  /* Custom scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-gray-900;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
   }
 }
 
 /* Game-specific styles */
-.font-game {
-  font-family: 'Cinzel Decorative', serif;
-  letter-spacing: 0.05em;
+@layer components {
+  .font-game {
+    font-family: 'Cinzel Decorative', serif;
+    letter-spacing: 0.05em;
+  }
+
+  .quest-card {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  .quest-card:hover {
+    @apply transform -translate-y-0.5;
+  }
 }
 
-/* Quest card hover effects */
-.quest-card {
-  transition: all 0.3s ease;
+/* Quest glow animation */
+@keyframes quest-glow {
+  0%, 100% {
+    @apply shadow-primary/20;
+    transform: translateY(0);
+  }
+  50% {
+    @apply shadow-primary/40;
+    transform: translateY(-1px);
+  }
 }
 
-.quest-card:hover {
-  transform: translateY(-2px);
+.quest-glow {
+  animation: quest-glow 2s ease-in-out infinite;
+}
+
+/* Custom scrollbar styling */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.3) hsl(var(--background));
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
 }

@@ -8,16 +8,16 @@ interface OrdersChartProps {
 
 export default function OrdersChart({ data }: OrdersChartProps) {
   const chartData = [
-    { name: 'Pending', value: data.filter(o => o.status === 'pending').length },
-    { name: 'In Progress', value: data.filter(o => o.status === 'in_progress').length },
-    { name: 'Completed', value: data.filter(o => o.status === 'completed').length },
-    { name: 'Cancelled', value: data.filter(o => o.status === 'cancelled').length },
+    { name: '受付中', value: data.filter(o => o.status === 'pending').length },
+    { name: '進行中', value: data.filter(o => o.status === 'in_progress').length },
+    { name: '完了', value: data.filter(o => o.status === 'completed').length },
+    { name: 'キャンセル', value: data.filter(o => o.status === 'cancelled').length },
   ];
 
   return (
     <Card className="col-span-2">
       <CardHeader>
-        <CardTitle>Work Orders Overview</CardTitle>
+        <CardTitle>クエスト概要</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">

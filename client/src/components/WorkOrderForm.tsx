@@ -44,7 +44,6 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
 
   const handleSubmit = async (data: Partial<WorkOrder>) => {
     try {
-      // Ensure date is in ISO format
       const formattedData = {
         ...data,
         dueDate: new Date(data.dueDate as string).toISOString()
@@ -55,12 +54,12 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
       await onSubmit(formattedData);
       form.reset();
       toast({
-        title: `Quest ${isEdit ? 'Updated' : 'Created'}`,
-        description: `The quest has been ${isEdit ? 'updated' : 'created'} successfully.`
+        title: `クエスト${isEdit ? '更新' : '作成'}`,
+        description: `クエストが${isEdit ? '更新' : '作成'}されました。`
       });
     } catch (error) {
       console.error('Form submission error:', error);
-      let errorMessage = "Failed to save quest. Please try again.";
+      let errorMessage = "クエストの保存に失敗しました。もう一度お試しください。";
       if (error instanceof Error) {
         errorMessage = error.message;
         console.error('Error details:', {
@@ -70,7 +69,7 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
         });
       }
       toast({
-        title: "Error",
+        title: "エラー",
         description: errorMessage,
         variant: "destructive"
       });
@@ -85,9 +84,9 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>タイトル</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Quest Title" />
+                <Input {...field} placeholder="クエストタイトル" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,9 +98,9 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>説明</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Quest Description" />
+                <Textarea {...field} placeholder="クエストの説明" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,18 +113,18 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>ステータス</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
+                      <SelectValue placeholder="ステータスを選択" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="pending">受付中</SelectItem>
+                    <SelectItem value="in_progress">進行中</SelectItem>
+                    <SelectItem value="completed">完了</SelectItem>
+                    <SelectItem value="cancelled">キャンセル</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -138,18 +137,18 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority</FormLabel>
+                <FormLabel>優先度</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Priority" />
+                      <SelectValue placeholder="優先度を選択" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem value="low">低</SelectItem>
+                    <SelectItem value="medium">中</SelectItem>
+                    <SelectItem value="high">高</SelectItem>
+                    <SelectItem value="urgent">緊急</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -163,9 +162,9 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
           name="assignedTo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Assigned To</FormLabel>
+              <FormLabel>担当者</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Quest Taker" />
+                <Input {...field} placeholder="クエスト担当者" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -177,9 +176,9 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel>場所</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Quest Location" />
+                <Input {...field} placeholder="クエスト場所" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -191,7 +190,7 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
           name="dueDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Due Date</FormLabel>
+              <FormLabel>期限</FormLabel>
               <FormControl>
                 <Input {...field} type="datetime-local" min={new Date().toISOString().slice(0, 16)} />
               </FormControl>
@@ -201,7 +200,7 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
         />
 
         <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-          {isEdit ? 'Update' : 'Create'} Quest
+          {isEdit ? 'クエスト更新' : 'クエスト作成'}
         </Button>
       </form>
     </Form>

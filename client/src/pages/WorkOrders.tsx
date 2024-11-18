@@ -147,18 +147,18 @@ export default function WorkOrders() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight font-game bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
-          Quest Board
+          クエストボード
         </h2>
         <Button 
           onClick={() => setIsCreateOpen(true)}
           className="bg-primary hover:bg-primary/90"
         >
-          Post New Quest
+          新規クエスト投稿
         </Button>
       </div>
 
       <Input
-        placeholder="Search quests..."
+        placeholder="クエストを検索..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="max-w-sm bg-gray-900/50 border-gray-800"
@@ -186,7 +186,7 @@ export default function WorkOrders() {
             />
           ) : (
             <div className="h-full flex items-center justify-center text-gray-500">
-              Select a quest to view details
+              詳細を見るクエストを選択してください
             </div>
           )}
         </div>
@@ -195,9 +195,9 @@ export default function WorkOrders() {
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogContent className="bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="font-game">Post New Quest</DialogTitle>
+            <DialogTitle className="font-game">新規クエスト投稿</DialogTitle>
             <DialogDescription>
-              Fill out the details below to post a new quest on the board.
+              クエストボードに新しいクエストを投稿するために、以下の詳細を入力してください。
             </DialogDescription>
           </DialogHeader>
           <WorkOrderForm onSubmit={handleCreate} />

@@ -8,12 +8,12 @@ export default function Dashboard() {
   const { data: orders } = useSWR<WorkOrder[]>('/api/work-orders');
 
   if (!stats || !orders) {
-    return <div>Loading...</div>;
+    return <div>読み込み中...</div>;
   }
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      <h2 className="text-3xl font-bold tracking-tight">ダッシュボード</h2>
       
       <StatsCard stats={stats} />
       

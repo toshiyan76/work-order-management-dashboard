@@ -9,6 +9,26 @@ interface QuestDetailsProps {
 }
 
 export default function QuestDetails({ quest, onStatusUpdate }: QuestDetailsProps) {
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return '受付中';
+      case 'in_progress': return '進行中';
+      case 'completed': return '完了';
+      case 'cancelled': return 'キャンセル';
+      default: return status;
+    }
+  };
+
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case 'low': return '低';
+      case 'medium': return '中';
+      case 'high': return '高';
+      case 'urgent': return '緊急';
+      default: return priority;
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-900/50 rounded-lg border-2 border-gray-800 h-full">
       <div className="border-b-2 border-gray-800 pb-4 mb-6">
@@ -33,17 +53,17 @@ export default function QuestDetails({ quest, onStatusUpdate }: QuestDetailsProp
 
       <div className="space-y-6">
         <div>
-          <h3 className="text-xl font-bold mb-2 font-game">Quest Details</h3>
+          <h3 className="text-xl font-bold mb-2 font-game">クエスト詳細</h3>
           <p className="text-gray-300">{quest.description}</p>
         </div>
 
         <div>
-          <h3 className="text-xl font-bold mb-2 font-game">Requirements</h3>
+          <h3 className="text-xl font-bold mb-2 font-game">要件</h3>
           <Card className="p-4 bg-gray-800/50">
             <ul className="list-disc list-inside space-y-2 text-gray-300">
-              <li>Priority Level: {quest.priority.toUpperCase()}</li>
-              <li>Current Status: {quest.status.toUpperCase()}</li>
-              <li>Due by: {new Date(quest.dueDate).toLocaleString()}</li>
+              <li>優先度: {getPriorityLabel(quest.priority)}</li>
+              <li>現在のステータス: {getStatusLabel(quest.status)}</li>
+              <li>期限: {new Date(quest.dueDate).toLocaleString()}</li>
             </ul>
           </Card>
         </div>
@@ -54,7 +74,7 @@ export default function QuestDetails({ quest, onStatusUpdate }: QuestDetailsProp
               className="w-full bg-primary hover:bg-primary/90"
               onClick={() => onStatusUpdate('in_progress')}
             >
-              Accept Quest
+              クエスト受注
             </Button>
           )}
           {quest.status === 'in_progress' && (
@@ -62,7 +82,7 @@ export default function QuestDetails({ quest, onStatusUpdate }: QuestDetailsProp
               className="w-full bg-green-600 hover:bg-green-700"
               onClick={() => onStatusUpdate('completed')}
             >
-              Complete Quest
+              クエスト完了
             </Button>
           )}
         </div>
