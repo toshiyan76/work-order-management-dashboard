@@ -14,7 +14,7 @@ function NavigationContent() {
             href="/" 
             className="text-xl font-bold font-game bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent hover:opacity-90 transition-all"
           >
-            Quest Board
+            はちぽ荘クエストボード
           </Link>
           <div className="flex space-x-4">
             <Link 
@@ -26,7 +26,7 @@ function NavigationContent() {
                   : "text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
             >
-              Dashboard
+              ダッシュボード
             </Link>
             <Link 
               href="/work-orders" 
@@ -37,7 +37,7 @@ function NavigationContent() {
                   : "text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
             >
-              Work Orders
+              ワークオーダー
             </Link>
           </div>
         </div>
