@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import { db } from "../db";
 import { workOrders, insertWorkOrderSchema } from "../db/schema";
 import { eq, desc, and, or, like } from "drizzle-orm";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 
 function logError(error: unknown, context: string) {
   if (error instanceof ZodError) {
@@ -13,6 +13,11 @@ function logError(error: unknown, context: string) {
     console.error(`Unknown error in ${context}:`, error);
   }
 }
+
+// Schema for status update
+const statusUpdateSchema = z.object({
+  status: z.enum(['pending', 'in_progress', 'completed', 'cancelled'])
+});
 
 export function registerRoutes(app: Express) {
   app.get("/api/work-orders", async (req: Request, res: Response) => {
@@ -84,7 +89,9 @@ export function registerRoutes(app: Express) {
   app.put("/api/work-orders/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const validatedData = insertWorkOrderSchema.partial().parse(req.body);
+      
+      // Validate only the status field
+      const validatedData = statusUpdateSchema.parse(req.body);
       
       const [updated] = await db.update(workOrders)
         .set({ 
@@ -104,12 +111,12 @@ export function registerRoutes(app: Express) {
       
       if (error instanceof ZodError) {
         res.status(400).json({ 
-          error: "Invalid work order data",
+          error: "Invalid status update",
           details: error.errors
         });
       } else {
         res.status(500).json({ 
-          error: "Failed to update work order",
+          error: "Failed to update work order status",
           details: process.env.NODE_ENV === 'development' ? error : undefined
         });
       }

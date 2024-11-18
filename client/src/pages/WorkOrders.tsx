@@ -105,16 +105,16 @@ export default function WorkOrders() {
       const response = await fetch(`/api/work-orders/${selectedQuest.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...selectedQuest, status }),
+        body: JSON.stringify({ status }), // Only send the status field
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update quest status');
+        throw new Error(errorData.error || (errorData.details ? JSON.stringify(errorData.details) : 'Failed to update quest status'));
       }
 
       const updatedQuest = await response.json();
-      console.log('Quest status updated:', updatedQuest);
+      setSelectedQuest(updatedQuest);
 
       // Update both the work orders list and stats
       await Promise.all([
@@ -134,6 +134,7 @@ export default function WorkOrders() {
           order.id === selectedQuest.id ? originalQuest : order
         )
       );
+      setSelectedQuest(originalQuest);
 
       toast({
         title: "Error",
