@@ -44,7 +44,15 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
 
   const handleSubmit = async (data: Partial<WorkOrder>) => {
     try {
-      await onSubmit(data);
+      // Ensure date is in ISO format
+      const formattedData = {
+        ...data,
+        dueDate: new Date(data.dueDate as string).toISOString()
+      };
+
+      console.log('Submitting form data:', formattedData);
+
+      await onSubmit(formattedData);
       form.reset();
       toast({
         title: `Quest ${isEdit ? 'Updated' : 'Created'}`,
@@ -52,9 +60,18 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
       });
     } catch (error) {
       console.error('Form submission error:', error);
+      let errorMessage = "Failed to save quest. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          formData: data
+        });
+      }
       toast({
         title: "Error",
-        description: "Failed to save quest. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -176,7 +193,7 @@ export default function WorkOrderForm({ onSubmit, defaultValues, isEdit }: WorkO
             <FormItem>
               <FormLabel>Due Date</FormLabel>
               <FormControl>
-                <Input {...field} type="datetime-local" />
+                <Input {...field} type="datetime-local" min={new Date().toISOString().slice(0, 16)} />
               </FormControl>
               <FormMessage />
             </FormItem>

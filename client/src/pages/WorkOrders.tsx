@@ -22,10 +22,9 @@ export default function WorkOrders() {
   const [search, setSearch] = useState('');
   const { toast } = useToast();
 
-  const { data: orders, error: fetchError, mutate: mutateOrders } = 
+  const { data: orders = [], error: fetchError, mutate: mutateOrders } = 
     useSWR<WorkOrder[]>(`/api/work-orders${search ? `?search=${search}` : ''}`);
 
-  // Handle any fetch errors
   if (fetchError) {
     console.error('Error fetching work orders:', fetchError);
     toast({
@@ -37,6 +36,21 @@ export default function WorkOrders() {
 
   const handleCreate = async (data: Partial<WorkOrder>) => {
     try {
+      console.log('Creating new quest with data:', data);
+
+      // Optimistic update
+      const optimisticQuest = {
+        id: Math.random(), // temporary ID
+        ...data,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      } as WorkOrder;
+
+      await mutateOrders(
+        (currentOrders = []) => [optimisticQuest, ...currentOrders],
+        false // Don't revalidate immediately
+      );
+
       const response = await fetch('/api/work-orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -49,9 +63,9 @@ export default function WorkOrders() {
       }
 
       const newQuest = await response.json();
-      console.log('Created new quest:', newQuest);
+      console.log('Quest created successfully:', newQuest);
 
-      // Mutate both the work orders list and stats
+      // Update both the work orders list and stats with the actual data
       await Promise.all([
         mutateOrders(),
         mutate('/api/stats')
@@ -64,6 +78,9 @@ export default function WorkOrders() {
       });
     } catch (error) {
       console.error('Error creating quest:', error);
+      // Revert optimistic update
+      await mutateOrders();
+      
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create quest",
@@ -74,7 +91,17 @@ export default function WorkOrders() {
 
   const handleStatusUpdate = async (status: 'in_progress' | 'completed') => {
     if (!selectedQuest) return;
+    
+    const originalQuest = { ...selectedQuest };
     try {
+      // Optimistic update
+      await mutateOrders(
+        currentOrders => currentOrders?.map(order => 
+          order.id === selectedQuest.id ? { ...order, status } : order
+        ),
+        false
+      );
+
       const response = await fetch(`/api/work-orders/${selectedQuest.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -86,7 +113,10 @@ export default function WorkOrders() {
         throw new Error(errorData.error || 'Failed to update quest status');
       }
 
-      // Mutate both the work orders list and stats
+      const updatedQuest = await response.json();
+      console.log('Quest status updated:', updatedQuest);
+
+      // Update both the work orders list and stats
       await Promise.all([
         mutateOrders(),
         mutate('/api/stats')
@@ -98,6 +128,13 @@ export default function WorkOrders() {
       });
     } catch (error) {
       console.error('Error updating quest status:', error);
+      // Revert optimistic update
+      await mutateOrders(currentOrders => 
+        currentOrders?.map(order => 
+          order.id === selectedQuest.id ? originalQuest : order
+        )
+      );
+
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update quest status",
@@ -105,10 +142,6 @@ export default function WorkOrders() {
       });
     }
   };
-
-  if (!orders) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="space-y-6">
